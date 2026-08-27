@@ -525,15 +525,15 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 .CodeRay .head .head{color:#f4f}
 </style>
 <!-- revnumber comes from plugin configuration -->
-<link rel="canonical" href="https://jakarta.ee/specifications/data/1.1-M3/jakarta-data-1.1-M3" />
+<link rel="canonical" href="https://jakarta.ee/specifications/data/1.1/jakarta-data-1.1" />
 </head>
 <body class="book toc2 toc-left">
 <div id="header">
 <h1>Jakarta Data</h1>
 <div class="details">
-<span id="revnumber"> 1.1-M3,</span>
-<span id="revdate">April 15, 2026</span>
-<br><span id="revremark">M3</span>
+<span id="revnumber"> 1.1,</span>
+<span id="revdate">August 27, 2026</span>
+<br><span id="revremark">FINAL</span>
 </div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
@@ -654,7 +654,7 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <li><a href="#_sorting_and_ordering">5.2.4. Sorting and ordering</a></li>
 <li><a href="#_logical_operators">5.2.5. Logical operators</a></li>
 <li><a href="#_select_clause_2">5.2.6. Select clause</a></li>
-<li><a href="#_where_clause">5.2.7. WHERE clause</a></li>
+<li><a href="#_where_clause">5.2.7. Where clause</a></li>
 <li><a href="#_update_statements">5.2.8. Update statements</a></li>
 <li><a href="#_delete_statements">5.2.9. Delete statements</a></li>
 </ul>
@@ -708,11 +708,11 @@ table.CodeRay td.code{padding:0 0 0 .75em}
 <div class="content">
 <pre>Specification: Jakarta Data
 
-Version: 1.1-M3
+Version: 1.1
 
-Status: M3
+Status: FINAL
 
-Release: April 15, 2026</pre>
+Release: August 27, 2026</pre>
 </div>
 </div>
 </div>
@@ -721,7 +721,7 @@ Release: April 15, 2026</pre>
 <h2 id="_copyright">Copyright</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Copyright (c) 2022, 2025 Eclipse Foundation.</p>
+<p>Copyright (c) 2022, 2026 Eclipse Foundation.</p>
 </div>
 <div class="sect2">
 <h3 id="_eclipse_foundation_specification_license_v1_1">Eclipse Foundation Specification License - v1.1</h3>
@@ -774,7 +774,7 @@ specification is expressly prohibited.</p>
 <div class="sidebarblock">
 <div class="content">
 <div class="paragraph">
-<p>Copyright (c) 2022, 2025 Eclipse Foundation AISBL. This software or
+<p>Copyright (c) 2022, 2026 Eclipse Foundation AISBL. This software or
 document includes material copied from or derived from <a href="https://jakarta.ee/specifications/data/">Jakarta Data</a>.</p>
 </div>
 </div>
@@ -2184,7 +2184,10 @@ A superinterface of a repository interface must either:</p>
 <p>Repositories perform operations on entities. For repository methods that are annotated with <code>@Insert</code>, <code>@Update</code>, <code>@Save</code>, or <code>@Delete</code>, the entity type is determined from the method parameter type. For repository methods that are annotated with <code>@Find</code>, the entity type is determined by the annotation <code>value</code> member, if an entity type is explicitly specified. Otherwise, for <code>find</code> and <code>delete</code> methods where the return type is an entity, array of entity, or parameterized type such as <code>List&lt;MyEntity&gt;</code> or <code>Page&lt;MyEntity&gt;</code>, the entity type is determined from the method return type.  For <code>count</code>, <code>exists</code>, and other <code>find</code> and <code>delete</code> methods that do not return the entity or accept the entity as a parameter, the entity type cannot be determined from the method signature and a <em>primary entity type</em> must be defined for the repository.</p>
 </div>
 <div class="paragraph">
-<p>Users of Jakarta Data declare a primary entity type for a repository by inheriting from a built-in repository super interface, such as <code>BasicRepository</code>, and specifying the primary entity type as the first type variable. For repositories that do not inherit from a super interface with a type parameter to indicate the primary entity type, lifecycle methods on the repository determine the primary entity type. To do so, all lifecycle methods where the method parameter is a type, an array of type, or is parameterized with a type that is annotated as an entity, must correspond to the same entity type. The primary entity type is assumed for methods that do not otherwise specify an entity type, such as <code>countByPriceLessThan</code>. Methods that require a primary entity type raise <code>MappingException</code> if a primary entity type is not provided.</p>
+<p>Users of Jakarta Data declare a primary entity type for a repository by inheriting a built-in repository superinterface, such as <code>BasicRepository</code>, and specifying the primary entity type as the first type variable. For repositories that do not inherit a superinterface with a type parameter to indicate the primary entity type, lifecycle methods of the repository determine the primary entity type. To do so, every lifecycle method where the method parameter is a type, an array of a type, or is parameterized with a type that is annotated as an entity, must correspond to the same entity type. The primary entity type is assumed for methods that do not otherwise specify an entity type, such as <code>countByPriceLessThan</code>. Methods that require a primary entity type raise <code>MappingException</code> if a primary entity type is not provided.</p>
+</div>
+<div class="paragraph">
+<p>A superinterface of a repository interface is not considered to have a well-defined primary entity type, and so&#8212;&#8203;unless the superinterface is one of the built-in generic repository supertypes&#8212;&#8203;each of its operations must have a signature which explicitly determines the entity type it acts on, according to the rules given above.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -2381,13 +2384,13 @@ However, Jakarta Data implementations are strongly encouraged to support the fol
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">where title like :title order by title asc, id asc</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">WHERE title LIKE :title ORDER BY title ASC, id ASC</span><span class="delimiter">&quot;</span></span>)
 Page&lt;<span class="predefined-type">Book</span>&gt; booksByTitle(<span class="predefined-type">String</span> title, PageRequest pageRequest);</code></pre>
 </div>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">where p.name = :prodname</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">WHERE p.name = :prodname</span><span class="delimiter">&quot;</span></span>)
 Optional&lt;Product&gt; findByName(<span class="annotation">@Param</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">prodname</span><span class="delimiter">&quot;</span></span>) <span class="predefined-type">String</span> name);</code></pre>
 </div>
 </div>
@@ -2396,7 +2399,7 @@ Optional&lt;Product&gt; findByName(<span class="annotation">@Param</span>(<span 
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">delete from Book where isbn = ?1</span><span class="delimiter">&quot;</span></span>)
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">DELETE FROM Book WHERE isbn = ?1</span><span class="delimiter">&quot;</span></span>)
 <span class="type">void</span> deleteBook(<span class="predefined-type">String</span> isbn);</code></pre>
 </div>
 </div>
@@ -2430,16 +2433,29 @@ The Jakarta Data implementation automatically recognizes the query annotations i
 <div class="ulist">
 <ul>
 <li>
-<p><code>@StaticNativeQuery</code>, which can annotate a Jakarta Data repository method in place of Jakarta Data&#8217;s <code>@Query</code> to supply a native SQL query.</p>
+<p><code>@NativeQuery</code>, which can annotate a Jakarta Data repository method in place of Jakarta Data&#8217;s <code>@Query</code> to supply a native SQL query.</p>
 </li>
 <li>
-<p><code>@StaticQuery</code>, which can annotate a Jakarta Data repository method in place of Jakarta Data&#8217;s <code>@Query</code> to supply a JPQL query.</p>
+<p><code>@JakartaQuery</code>, which can annotate a Jakarta Data repository method in place of Jakarta Data&#8217;s <code>@Query</code> to supply a JPQL query.</p>
 </li>
 <li>
-<p><code>@ReadQueryOptions</code>, which can annotate a Jakarta Data repository method annotated <code>@Query</code>, <code>@StaticQuery</code>, or <code>@StaticNativeQuery</code> that performs a <code>SELECT</code> operation. Alternatively, it can annotate a Jakarta Data repository method annotated <code>@Find</code>. The <code>ReadQueryOptions</code> annotation allows the application to supply additional options defined by Jakarta Persistence for queries that perform read operations.</p>
+<p><code>@QueryOptions</code>, which can annotate a Jakarta Data repository method to supply additional options defined by Jakarta Persistence. The Jakarta Data repository method must also</p>
+<div class="ulist">
+<ul>
+<li>
+<p>be annotated <code>@Query</code>, <code>@JakartaQuery</code>, or <code>@NativeQuery</code> and perform a <code>SELECT</code> operation,</p>
 </li>
 <li>
-<p><code>@WriteQueryOptions</code>, which can annotate a Jakarta Data repository method annotated <code>@Query</code>, <code>@StaticQuery</code>, or <code>@StaticNativeQuery</code> that performs a <code>DELETE</code> or <code>UPDATE</code> operation. Alternatively, it can annotate a Jakarta Data repository method annotated <code>@Delete</code> when the latter is not used as a lifecycle annotation.  The <code>WriteQueryOptions</code> annotation allows the application to supply additional options defined by Jakarta Persistence for queries that perform write operations.</p>
+<p>be annotated <code>@Find</code>,</p>
+</li>
+<li>
+<p>be annotated <code>@Query</code>, <code>@JakartaQuery</code>, or <code>@NativeQuery</code> and perform a <code>DELETE</code> or <code>UPDATE</code> operation, or</p>
+</li>
+<li>
+<p>be annotated <code>@Delete</code> and not define a lifecycle operation.</p>
+</li>
+</ul>
+</div>
 </li>
 </ul>
 </div>
@@ -2597,7 +2613,7 @@ A Jakarta Data implementation might allow a resource accessor method to be annot
 
 <span class="keyword">default</span> <span class="type">void</span> cleanup() {
     <span class="keyword">try</span> (<span class="predefined-type">Statement</span> s = connection().createStatement()) {
-        s.executeUpdate(<span class="string"><span class="delimiter">&quot;</span><span class="content">truncate table books</span><span class="delimiter">&quot;</span></span>);
+        s.executeUpdate(<span class="string"><span class="delimiter">&quot;</span><span class="content">TRUNCATE TABLE books</span><span class="delimiter">&quot;</span></span>);
     }
 }</code></pre>
 </div>
@@ -2734,7 +2750,7 @@ Any special parameter declared with one of these types must be declared with typ
     <span class="annotation">@Find</span>
     Page&lt;Product&gt; findByName(<span class="predefined-type">String</span> name, PageRequest pageRequest, Order&lt;Product&gt; order);
 
-    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">where name like :pattern</span><span class="delimiter">&quot;</span></span>)
+    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">WHERE name LIKE :pattern</span><span class="delimiter">&quot;</span></span>)
     <span class="predefined-type">List</span>&lt;Product&gt; findByNameLike(<span class="predefined-type">String</span> pattern, Limit max, Sort&lt;Product&gt; sort);
 
 }</code></pre>
@@ -2761,7 +2777,7 @@ Any special parameter declared with one of these types must be declared with typ
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="CodeRay highlight"><code data-lang="java">PageRequest pageRequest = PageRequest.ofPage(<span class="integer">1</span>).size(<span class="integer">20</span>);
+<pre class="CodeRay highlight"><code data-lang="java">PageRequest pageRequest = PageRequest.ofSize(<span class="integer">20</span>).pageNumber(<span class="integer">1</span>);
 <span class="predefined-type">List</span>&lt;Product&gt; first20 = products.findByName(name, pageRequest,
                             Order.by(_Product.price.desc(),
                                      _Product.id.asc()));</code></pre>
@@ -2849,7 +2865,7 @@ This parameter allows the caller of a repository method to programmatically expr
 <p>expressed via <a href="#_parameter_based_automatic_query_methods">parameters</a> of a method annotated <code>@Find</code>, or</p>
 </li>
 <li>
-<p>given in the <a href="#Where clause">where clause</a> of a query specified by a <code>@Query</code> annotation.</p>
+<p>given in the <a href="#_where_clause">where clause</a> of a query specified by a <code>@Query</code> annotation.</p>
 </li>
 </ul>
 </div>
@@ -3028,7 +3044,7 @@ This parameter allows the caller of a repository method to programmatically expr
 People people;
 
 Page&lt;Person&gt; page =
-        people.findAll(PageRequest.ofPage(<span class="integer">1</span>).size(<span class="integer">2</span>),
+        people.findAll(PageRequest.ofSize(<span class="integer">2</span>).pageNumber(<span class="integer">1</span>),
                        Order.by(Sort.asc(<span class="string"><span class="delimiter">&quot;</span><span class="content">id</span><span class="delimiter">&quot;</span></span>)));</code></pre>
 </div>
 </div>
@@ -3115,8 +3131,8 @@ Page&lt;Customer&gt; page =
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java">Customer c = ...
-PageRequest p = PageRequest.ofPage(<span class="integer">10</span>)
-                           .size(<span class="integer">50</span>)
+PageRequest p = PageRequest.ofSize(<span class="integer">50</span>)
+                           .pageNumber(<span class="integer">10</span>)
                            .afterCursor(<span class="predefined-type">Cursor</span>.forKey(c.lastName, c.firstName, c.id));
 page = customers.findByZipcode(<span class="integer">55902</span>, p);</code></pre>
 </div>
@@ -3260,7 +3276,7 @@ PageRequest pageRequest = PageRequest.ofSize(<span class="integer">25</span>);
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Repository</span>
 <span class="directive">public</span> <span class="type">interface</span> <span class="class">Products</span> <span class="directive">extends</span> CrudRepository&lt;Product, <span class="predefined-type">Long</span>&gt; {
-    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">where name like ?1</span><span class="delimiter">&quot;</span></span>)
+    <span class="annotation">@Query</span>(<span class="string"><span class="delimiter">&quot;</span><span class="content">WHERE name LIKE ?1</span><span class="delimiter">&quot;</span></span>)
     CursoredPage&lt;Product&gt; findByNameLike(<span class="predefined-type">String</span> namePattern,
                                          PageRequest pageRequest,
                                          Order&lt;Product&gt; sorts);
@@ -3277,8 +3293,8 @@ Order&lt;Product&gt; order =
         Order.by(_Product.price.asc(),
                  _Product.id.asc());
 PageRequest pageRequest =
-        PageRequest.ofPage(<span class="integer">5</span>)
-                   .size(<span class="integer">10</span>)
+        PageRequest.ofSize(<span class="integer">10</span>)
+                   .pageNumber(<span class="integer">5</span>)
                    .afterCursor(<span class="predefined-type">Cursor</span>.forKey(priceMidpoint, <span class="integer">0L</span>));
 CursoredPage&lt;Product&gt; moreExpensive =
         products.findByNameLike(pattern, pageRequest, order);</code></pre>
@@ -3334,8 +3350,8 @@ CursoredPage&lt;Car&gt; page1 =
 <div class="listingblock">
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java">PageRequest page2Request = PageRequest
-             .ofPage(<span class="integer">2</span>) <span class="comment">// cosmetic when using a cursor</span>
-             .size(<span class="integer">25</span>)
+             .ofSize(<span class="integer">25</span>)
+             .pageNumber(<span class="integer">2</span>) <span class="comment">// cosmetic when using a cursor</span>
              .afterCursor(<span class="predefined-type">Cursor</span>.forKey(lastCar.vehicleCondition,
                                         lastCar.price,
                                         lastCar.vin));
@@ -3545,7 +3561,7 @@ Every Jakarta Data provider is encouraged, but not required, to support asynchro
 </td>
 <td class="content">
 A repository method annotated with the <code>@Asynchronous</code> annotation from the Jakarta Concurrency specification is permitted to declare the return type <code>java.util.concurrent.CompletionStage</code>.
-In this case, the Jakarta Data provider must synchronously return an already-completed <code>CompletionStage</code> so that the Jakarta Concurrency provider is able to control the asynchronous behavior.
+In this case, the Jakarta Data provider must synchronously return an already-completed <code>CompletionStage</code> so that the Jakarta Concurrency provider is able to control the asynchronous behavior. A Jakarta Data provider that does not offer <code>CompletionStage</code> as a return type raises <code>UnsupportedOperationException</code> when the operation is attempted and can reject the return type of <code>CompletionStage</code> by failing at compile time.
 </td>
 </tr>
 </table>
@@ -3567,6 +3583,16 @@ CompletionStage&lt;<span class="predefined-type">Book</span>&gt; bookByIsbn(<spa
 <div class="content">
 <pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Insert</span>
 CompletionStage&lt;<span class="predefined-type">Void</span>&gt; insertBook(<span class="predefined-type">Book</span> book);</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A method annotated with the Jakarta Concurrency <code>@Asynchronous</code> and having a <code>void</code> return type is also an asynchronous repository method. For example:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="CodeRay highlight"><code data-lang="java"><span class="annotation">@Asynchronous</span>
+<span class="annotation">@Insert</span>
+<span class="type">void</span> insertBook(<span class="predefined-type">Book</span> book);</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -3603,7 +3629,9 @@ Support for stateful repositories is defined in the dedicated module <code>jakar
 <div class="sect3">
 <h4 id="_persistence_contexts">4.13.1. Persistence contexts</h4>
 <div class="paragraph">
-<p>A stateful repository is backed by a <em>persistence context</em>, a set of managed entity instances in which at most one instance represents a given record in the database.</p>
+<p>A stateful repository operation is always performed in a <em>persistence context</em>, operating on a set of managed entity instances in which at most one instance represents a given record in the database.
+A given persistence context might span multiple repository operations.
+For example, a persistence context often spans the operations performed within a given transaction.</p>
 </div>
 <div class="ulist">
 <ul>
@@ -3617,12 +3645,12 @@ Support for stateful repositories is defined in the dedicated module <code>jakar
 <p>Multiple repositories might share a persistence context, especially if they share a datastore.</p>
 </li>
 <li>
-<p>A persistence context is never shared across transactions.</p>
+<p>A persistence context is never shared across concurrent transactions.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>A query method of a stateful repository which returns an entity type always returns managed instances belonging to the persistence context associated with the repository.</p>
+<p>A query method of a stateful repository which returns an entity type always returns managed instances belonging to the persistence context in which the repository operation is performed.</p>
 </div>
 <div class="admonitionblock warning">
 <table>
@@ -3649,7 +3677,7 @@ Support for stateful repositories is defined in the dedicated module <code>jakar
 </td>
 <td class="content">
 <div class="paragraph">
-<p>Implementations of Jakarta Data are encouraged to propagate a single persistence context within a given transaction across repositories which share a given datasource.
+<p>Implementations of Jakarta Data are encouraged to propagate a single persistence context within a given transaction across repositories which share a given data store.
 For example, a Jakarta Data provider backed by an implementation of Jakarta Persistence might take advantage of standard Jakarta EE transaction-scoped persistence context propagation.</p>
 </div>
 </td>
@@ -3667,7 +3695,7 @@ For example, a Jakarta Data provider backed by an implementation of Jakarta Pers
 Instead, this specification defines the special lifecycle annotations <code>@Persist</code>, <code>@Merge</code>, <code>@Refresh</code>, <code>@Remove</code>, and <code>@Detach</code> for declaring lifecycle methods of stateful repositories.</p>
 </div>
 <div class="paragraph">
-<p>A lifecycle method annotated <code>@Remove</code> or <code>@Refresh</code> only accepts managed entities associated with the persistence context underlying the repository.
+<p>A lifecycle method annotated <code>@Remove</code> or <code>@Refresh</code> only accepts managed entities associated with the persistence context in which the repository method is performed.
 On the other hand, a method annotated <code>@Persist</code>, <code>@Merge</code>, or <code>@Detach</code> also accepts unmanaged entities.</p>
 </div>
 </div>
@@ -3948,7 +3976,7 @@ A Jakarta Data provider is permitted and encouraged to support additional types.
 </div>
 </div>
 <div class="sect3">
-<h4 id="_where_clause">5.2.7. WHERE clause</h4>
+<h4 id="_where_clause">5.2.7. Where clause</h4>
 <div class="paragraph">
 <p>When working with NoSQL databases, the <code>WHERE</code> clause behavior may vary depending on the database structure and capabilities:</p>
 </div>
@@ -4539,8 +4567,8 @@ found = products.namedLike(namePattern,
 </div>
 <div id="footer">
 <div id="footer-text">
- 1.1-M3<br>
-Last updated 2025-11-06 15:52:43 UTC
+ 1.1<br>
+Last updated 2026-08-27 15:43:05 UTC
 </div>
 </div>
 <script type="text/x-mathjax-config">
